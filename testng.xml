@@ -3,7 +3,7 @@
 <suite name="TestAPIRegressionSuite">
 	<groups>
 		<run>
-			<include name="P0" /><!-- groups are P0 and P1 -->
+			<include name="P1" /><!-- groups are P0 and P1 -->
 		</run>
 	</groups>
 	<test name="TestAPI">
