@@ -43,6 +43,19 @@ public class CommonUtil {
 	}
 
 	/**
+	 * Convert string to date in a given format
+	 * 
+	 * @param date
+	 * @param format
+	 * @return Date
+	 * @throws ParseException
+	 */
+	public String convertToDateStringValue(String date, String format) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		return dateFormat.format(dateFormat.parse(date));
+	}
+
+	/**
 	 * Get random email
 	 * 
 	 * @return String

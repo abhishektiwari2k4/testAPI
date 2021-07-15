@@ -1,5 +1,6 @@
 package com.test.api;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyTwoUsersCannotHaveSameEmail() {
+	public void verifyTwoUsersCannotHaveSameEmail() throws ParseException {
 		test = extent.createTest("verify Two Users Cannot Have Same Email");
 		UserRequest request = rest.getUserRequest();
 		Response response = rest.createUser(request);
@@ -76,7 +77,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserBlankFirstName() {
+	public void verifyCreateUserBlankFirstName() throws ParseException {
 		test = extent.createTest("verify create user blank first name");
 		UserRequest request = rest.getUserRequest();
 		request.setFirstName("");
@@ -102,7 +103,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" }, dataProviderClass = TestDataProvider.class, dataProvider = "firstNameLength")
-	public void verifyCreateUserInvalidLengthFirstName(int length) {
+	public void verifyCreateUserInvalidLengthFirstName(int length) throws ParseException {
 		test = extent.createTest("verify create user Invalid Length first name");
 		UserRequest request = rest.getUserRequest();
 		request.setFirstName(util.getRandomString(length));
@@ -121,7 +122,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserNullFirstName() {
+	public void verifyCreateUserNullFirstName() throws ParseException {
 		test = extent.createTest("verify create user null first name");
 		UserRequest request = rest.getUserRequest();
 		request.setFirstName(null);
@@ -140,7 +141,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserBlankLastName() {
+	public void verifyCreateUserBlankLastName() throws ParseException {
 		test = extent.createTest("verify create user blank last name");
 		UserRequest request = rest.getUserRequest();
 		request.setLastName("");
@@ -166,7 +167,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" }, dataProviderClass = TestDataProvider.class, dataProvider = "lastNameLength")
-	public void verifyCreateUserInvalidLengthLastName(int length) {
+	public void verifyCreateUserInvalidLengthLastName(int length) throws ParseException {
 		test = extent.createTest("verify create user Invalid Length last name");
 		UserRequest request = rest.getUserRequest();
 		request.setLastName(util.getRandomString(length));
@@ -185,7 +186,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserNullLastName() {
+	public void verifyCreateUserNullLastName() throws ParseException {
 		test = extent.createTest("verify create user null last name");
 		UserRequest request = rest.getUserRequest();
 		request.setLastName(null);
@@ -204,7 +205,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserBlankEmail() {
+	public void verifyCreateUserBlankEmail() throws ParseException {
 		test = extent.createTest("verify create user blank email");
 		UserRequest request = rest.getUserRequest();
 		request.setEmail("");
@@ -230,7 +231,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserNullEmail() {
+	public void verifyCreateUserNullEmail() throws ParseException {
 		test = extent.createTest("verify create user null email");
 		UserRequest request = rest.getUserRequest();
 		request.setEmail(null);
@@ -249,7 +250,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" }, dataProviderClass = TestDataProvider.class, dataProvider = "invalidEmail")
-	public void verifyCreateUserInvalidEmail(String email) {
+	public void verifyCreateUserInvalidEmail(String email) throws ParseException {
 		test = extent.createTest("verify create user invalid email");
 		UserRequest request = rest.getUserRequest();
 		request.setEmail(email);
@@ -268,7 +269,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" }, dataProviderClass = TestDataProvider.class, dataProvider = "nullBlank")
-	public void verifyCreateUserBlankBirthDate(String blank) {
+	public void verifyCreateUserBlankBirthDate(String blank) throws ParseException {
 		test = extent.createTest("verify create user Blank Birth Date");
 		UserRequest request = rest.getUserRequest();
 		request.setDayOfBirth(blank);
@@ -287,7 +288,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" })
-	public void verifyCreateUserFutureBirthDate() {
+	public void verifyCreateUserFutureBirthDate() throws ParseException {
 		test = extent.createTest("verify create user future birth date");
 		UserRequest request = rest.getUserRequest();
 		request.setDayOfBirth(util.getDate(1, "yyyy-MM-dd"));
@@ -306,7 +307,7 @@ public class CreateUser extends BaseTest {
 	}
 
 	@Test(groups = { "P1" }, dataProviderClass = TestDataProvider.class, dataProvider = "invalidFormat")
-	public void verifyCreateUserInvalidFormatBirthDate(String format) {
+	public void verifyCreateUserInvalidFormatBirthDate(String format) throws ParseException {
 		test = extent.createTest("verify create user invalid format birth date");
 		UserRequest request = rest.getUserRequest();
 		request.setDayOfBirth(util.getDate(-1000, format));
@@ -341,10 +342,13 @@ public class CreateUser extends BaseTest {
 	 * @param response
 	 * @param error
 	 * @param message
+	 * @throws ParseException
 	 */
-	private void verifyErrorResponse(ErrorResponse response, List<SubError> error, ErrorMessage message) {
+	private void verifyErrorResponse(ErrorResponse response, List<SubError> error, ErrorMessage message)
+			throws ParseException {
 		Assert.assertEquals(response.getStatus(), message.getStatus());
-		Assert.assertEquals(response.getTimestamp(), util.getDate(0, "dd-MM-yyyy hh:mm:ss"));
+		Assert.assertEquals(util.convertToDateStringValue(response.getTimestamp(), "dd-MM-yyyy hh:mm"),
+				util.getDate(0, "dd-MM-yyyy hh:mm"));
 		Assert.assertEquals(response.getMessage(), message.getMessage());
 		Assert.assertNull(response.getDebugMessage());
 		Assert.assertTrue(error.containsAll(response.getSubErrors()));
@@ -355,10 +359,12 @@ public class CreateUser extends BaseTest {
 	 * 
 	 * @param response
 	 * @param message
+	 * @throws ParseException
 	 */
-	private void verifyErrorResponseWrongValue(ErrorResponse response, ErrorMessage message) {
+	private void verifyErrorResponseWrongValue(ErrorResponse response, ErrorMessage message) throws ParseException {
 		Assert.assertEquals(response.getStatus(), message.getStatus());
-		Assert.assertEquals(response.getTimestamp(), util.getDate(0, "dd-MM-yyyy hh:mm:ss"));
+		Assert.assertEquals(util.convertToDateStringValue(response.getTimestamp(), "dd-MM-yyyy hh:mm"),
+				util.getDate(0, "dd-MM-yyyy hh:mm"));
 		Assert.assertEquals(response.getMessage(), message.getMessage());
 		Assert.assertNotNull(response.getDebugMessage());
 		Assert.assertNull(response.getSubErrors());
